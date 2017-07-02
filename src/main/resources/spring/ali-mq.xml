@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+    	http://www.springframework.org/schema/beans
+    	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+    <!--MQ生产者相关开始-->
+    <bean id="producer" class="com.aliyun.openservices.ons.api.bean.ProducerBean"
+          init-method="start" destroy-method="shutdown">
+        <property name="properties">
+            <map>
+                <entry key="ProducerId" value="${ProducerId}"/> <!-- PID,请替换 -->
+                <entry key="AccessKey" value="${AccessKey}"/> <!-- ACCESS_KEY,请替换 -->
+                <entry key="SecretKey" value="${SecretKey}"/> <!-- SECRET_KEY,请替换 -->
+                <entry key="ONSAddr" value="${ONSAddr}"/>
+            </map>
+        </property>
+    </bean>
+    <!--顺序消息-->
+    <bean id="mqOrderProducer" class="com.rqbao.mq.listenter.MQOrderProducer"
+          init-method="start" destroy-method="shutdown">
+        <constructor-arg name="producerProperties">
+            <props>
+                <prop key="ProducerId">${OrderProducerId}</prop>
+                <prop key="AccessKey">${AccessKey}</prop>
+                <prop key="SecretKey">${SecretKey}</prop>
+                <prop key="ONSAddr">${ONSAddr}</prop>
+                <prop key="ORDER_TOPIC">${ORDER_TOPIC}</prop>
+                <prop key="TAG">1111</prop>
+            </props>
+        </constructor-arg>
+    </bean>
+    <!--MQ生产者相关结束-->
+
+    <!--MQ消费者相关开始-->
+    <bean id="consumer" class="com.aliyun.openservices.ons.api.bean.ConsumerBean"
+          init-method="start" destroy-method="shutdown">
+        <property name="properties">
+            <map>
+                <entry key="ConsumerId" value="${OrderConsumerId}"/> <!-- CID,请替换 -->
+                <entry key="AccessKey" value="${AccessKey}"/> <!-- ACCESS_KEY,请替换 -->
+                <entry key="SecretKey" value="${SecretKey}"/><!-- SECRET_KEY,请替换 -->
+                <entry key="ONSAddr" value="${ONSAddr}"/>
+            </map>
+        </property>
+
+        <property name="subscriptionTable">
+            <map>
+                <entry value-ref="messageListener">
+                    <key>
+                        <bean class="com.aliyun.openservices.ons.api.bean.Subscription">
+                            <property name="topic" value="${topic}"/> <!-- Topic,请替换 -->
+                            <property name="expression" value="*"/><!-- MessageType名: 多个messageType 用 “||”分割 -->
+                        </bean>
+                    </key>
+                </entry>
+            </map>
+
+        </property>
+    </bean>
+    <!--顺序消息-->
+    <bean id="consumerOrder" class="com.rqbao.mq.listenter.MQOrderConsumer"
+          init-method="start" destroy-method="shutdown">
+        <constructor-arg name="consumerProperties">
+            <props>
+                <prop key="ConsumerId">${ConsumerId}</prop>
+                <prop key="AccessKey">${AccessKey}</prop>
+                <prop key="SecretKey">${SecretKey}</prop>
+                <prop key="ONSAddr">${ONSAddr}</prop>
+                <prop key="ORDER_TOPIC">${ORDER_TOPIC}</prop>
+                <prop key="TAG">1111</prop>
+            </props>
+        </constructor-arg>
+    </bean>
+    <!-- 消息处理器 -->
+    <bean id="messageListener" class="com.rqbao.mq.listenter.MQListener"/>
+    <!--顺序-->
+    <!--<bean id="messageOrderListener" class="com.rqbao.mq.listenter.MQOrderListener"/>-->
+    <!--MQ消费者相关结束-->
+</beans>
