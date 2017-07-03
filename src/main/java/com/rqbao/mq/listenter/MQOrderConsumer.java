@@ -10,7 +10,7 @@ import com.aliyun.openservices.ons.api.order.OrderConsumer;
 import java.util.Properties;
 
 /**
- * Created by baiguantao on 2017/7/2.
+ * Created by ricky on 2017/7/2.
  */
 public class MQOrderConsumer {
     private  Properties consumerProperties = new Properties();

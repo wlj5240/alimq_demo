@@ -22,10 +22,6 @@ public class MQOrderService implements InitializingBean{
     @Autowired
     MQOrderProducer mqOrderProducer;
 
-    public  void  send(){
-        OrderProducer producer=mqOrderProducer.getOrderProducer();
-
-    }
     /**
      * 发送顺序MQ消息
      * @param TAG 业务tag  tag将使用CGUTILS中的存管接口变量
